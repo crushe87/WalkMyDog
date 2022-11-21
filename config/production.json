@@ -1,0 +1,6 @@
+{
+    "name": "WalkMyDog App - Prod",
+    "mail": {
+        "host": "prod-mail-server"
+    }
+}
