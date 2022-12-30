@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wmd-api
+spec:
+  selector:
+    matchLabels:
+      deployment-name: wmd-api
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        deployment-name: wmd-api
+    spec:
+      containers:
+        - name: wmd-api-container
+          image: crushe/wmd-api-node:v1
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service-label: wmd-cluster-service
+  name: wmd-cluster-service
+spec:
+  type: ClusterIP
+  ports:
+  - name: wmd-cluster-service-port
+    port: 8080
+    protocol: TCP
+  selector:
+    deployment-name: wmd-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service-label: wmd-cluster-service 
+  name: wmd-cluster-service-loadbalancer
+spec:
+  type: LoadBalancer
+  ports:
+  - name: load-balancer-service-port
+    port: 8080
+    protocol: TCP
+  selector:
+    deployment-name: wmd-api

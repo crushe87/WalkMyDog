@@ -1,46 +1,25 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const { Schema } = mongoose;
 
-
-const Walker = mongoose.model( 'Walker', new mongoose.Schema({
-    firstName:{
-        type: String,
-        required: true,
-        minlength: 2,
-        maxlength: 30
-    },
-    lastName:{
-        type: String,
-        required: true,
-        minlength: 2,
-        maxlength: 30
-    },
-    bio:{
-        type: String,
-        required: true
-    },
-    email:{
-        type: String,
-        required: true
-    },
-    password:{
-        type: String,
-        required: true
-    },
-    phone:{
-        type: String
-    } 
-}));
+const schema = new Schema({ 
+    userName: String,
+    bio: String,
+    email: String
+});
+schema.method("toJSON", function() {
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+  });
+const Walker = mongoose.model('Walker', schema);
 
 
 function validateWalker(walker) {
     const schema = Joi.object({
-        firstName: Joi.string().min(3).required(),
-        lastName:  Joi.string().min(3).required(),
+        userName: Joi.string().min(3).required(),
         bio:  Joi.string().min(30).required(),
-        email:  Joi.string().min(3).required(),
-        password:  Joi.string().min(8).required(),
-        phone:  Joi.string().min(8)
+        email:  Joi.string().min(3).required()
 });
 
 return schema.validate(walker);
@@ -48,3 +27,6 @@ return schema.validate(walker);
 
 exports.Walker = Walker;
 exports.validateWalker = validateWalker;
+
+
+

@@ -1,3 +1,4 @@
+
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const {Walker, validateWalker} = require('../models/walker');
@@ -7,7 +8,7 @@ const router = express.Router();
 
 
 router.get('/', async (req, res) => {
-    const walkers = await Walker.find().sort('firstName');
+    const walkers = await Walker.find().sort('userName');
     res.send(walkers);
 });
 
@@ -16,12 +17,9 @@ router.post('/', auth, async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     let walker = new Walker({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
+        userName: req.body.userName,
         bio: req.body.bio,
-        email: req.body.email,
-        password: req.body.password,
-        phone: req.body.phone
+        email: req.body.email
     });
         walker = await walker.save();
 
@@ -30,16 +28,13 @@ router.post('/', auth, async (req, res) => {
 
 
 router.put('/:id', async (req, res) => {
-    const { error } = validateWalker(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    //const { error } = validateWalker(req.body);
+    //if (error) return res.status(400).send(error.details[0].message);
 
     const walker = await Walker.findByIdAndUpdate(req.params.id, {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
+            userName: req.body.userName,
             bio: req.body.bio,
-            email: req.body.email,
-            password: req.body.password,
-            phone: req.body.phone
+            email: req.body.email
         }, 
         { new: true });
 
@@ -49,7 +44,7 @@ router.put('/:id', async (req, res) => {
 });
 
 
-router.delete('/:id', [auth, admin], async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const walker = await Walker.findByIdAndRemove(req.params.id);
     
     if (!walker) return res.status(404).send('The walker with the given id cannot be found');
